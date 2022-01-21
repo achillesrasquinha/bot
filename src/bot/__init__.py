@@ -23,6 +23,7 @@ from bot.__attr__ import (
 )
 from bot.config      import PATH
 from bot.__main__    import main
+from bot.bot         import Bot
 
 from bpyutils.cache       import Cache
 from bpyutils.config      import Settings
