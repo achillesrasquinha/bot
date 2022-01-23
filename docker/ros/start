@@ -1,3 +1,7 @@
 #!/bin/bash
 
+startxfce4
+
+x11vnc -display :0 -forever -usepw -create -geometry "$BOT_VNC_RESOLUTION"
+
 exec "$@"

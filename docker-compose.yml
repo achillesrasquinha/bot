@@ -5,3 +5,6 @@ services:
     build:
       context: ./docker/ros
       dockerfile: ./Dockerfile
+    image: ${BOT_DOCKER_REGISTRY:-ghcr.io/achillesrasquinha/bot}:core
+    ports:
+      - ${BOT_VNC_PORT}:${BOT_VNC_PORT}

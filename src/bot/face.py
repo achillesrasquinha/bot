@@ -4,4 +4,4 @@ from bot.base import Object
 
 class FaceRecognizer(Object):
     def recognize(self, array):
-        pass
+        DeepFace.detectFace(array)
