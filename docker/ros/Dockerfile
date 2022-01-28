@@ -6,7 +6,8 @@ ARG HOME=/home/bot \
     BOT_GROUP=bot \
     BOT_USER=bot
 
-ENV BOT_VNC_RESOLUTION=1024x768
+ENV LANG=en_US.UTF-8 \
+    BOT_VNC_RESOLUTION=1024x768
 
 RUN set -e && \
     addgroup -S ${BOT_GROUP} && \
