@@ -215,7 +215,7 @@ docker-build: clean docker-pull ## Build the Docker Image.
 	$(call log,INFO,Building Docker Image)
 
 	if [[ -f "${BASEDIR}/docker-compose.yml" ]]; then \
-		@docker-compose build; \
+		docker-compose build; \
 	elif [[ -d "${BASEDIR}/docker/files" ]]; then \
 		for folder in `ls ${BASEDIR}/docker/files`; do \
 			docker build ${BASEDIR}/docker/files/$$folder --tag $(DOCKER_IMAGE):$$folder $(DOCKER_BUILD_ARGS) ; \
