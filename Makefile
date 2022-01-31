@@ -5,6 +5,9 @@ BASEDIR					= $(shell pwd)
 
 ENVIRONMENT			   ?= development
 
+SHELL				   ?= /bin/bash
+.ONESHELL:
+
 PROJECT					= bot
 
 PROJDIR					= ${BASEDIR}/src/bot
@@ -12,7 +15,6 @@ TESTDIR					= ${BASEDIR}/tests
 DOCSDIR					= ${BASEDIR}/docs
 
 NOTEBOOKSDIR			= ${DOCSDIR}/source/notebooks
-
 
 PYTHONPATH		 	   ?= python
 
