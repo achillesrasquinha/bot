@@ -1,7 +1,11 @@
 #!/bin/bash
 
-startxfce4
+nohup Xvfb ${DISPLAY} -screen 0 ${RESOLUTION} -ac +extension GLX +render -noreset > /dev/null 2>&1 &
 
-x11vnc -display :0 -forever -usepw -create -geometry "$BOT_VNC_RESOLUTION"
+nohup startxfce4 > /dev/null 2>&1 &
 
-exec "$@"
+nohup x11vnc -noxkb -noxrecord -noxdamage -display ${DISPLAY} -forever -bg -rfbauth ${HOME}/.vnc/passwd -rfbport ${BOT_VNC_PORT} -users ${BOT_USER} # > /dev/null 2>&1 &
+
+/serial-bridge
+
+tail -f /dev/null

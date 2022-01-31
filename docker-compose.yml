@@ -6,5 +6,8 @@ services:
       context: ./docker/ros
       dockerfile: ./Dockerfile
     image: ${BOT_DOCKER_REGISTRY:-ghcr.io/achillesrasquinha/bot}:core
+    volumes:
+      - ./shared:/home/bot/shared
     ports:
       - ${BOT_VNC_PORT}:${BOT_VNC_PORT}
+    command: /start
