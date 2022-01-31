@@ -5,9 +5,17 @@ services:
     build:
       context: ./docker/ros
       dockerfile: ./Dockerfile
-    image: ${BOT_DOCKER_REGISTRY:-ghcr.io/achillesrasquinha/bot}:core
+    image: ${BOT_DOCKER_REGISTRY:-ghcr.io/achillesrasquinha/ros}:core
     volumes:
       - ./shared:/home/bot/shared
     ports:
-      - ${BOT_VNC_PORT}:${BOT_VNC_PORT}
+      - ${BOT_VNC_PORT:-5900}:${BOT_VNC_PORT:-5900}
     command: /start
+    # networks:
+    #   - ros
+    environment:
+      - BOT_BRIDGE_TCP_HOST=host.docker.internal
+
+networks:
+  ros:
+    driver: bridge

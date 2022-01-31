@@ -4,6 +4,7 @@ ARG HOME=/home/bot \
     BOT_VNC_PASSWORD=bot
 
 ENV LANG=en_US.UTF-8 \
+    PYTHONUNBUFFERED=1 \
     DISPLAY=:99 \
     TERM=xterm \
     RESOLUTION=1920x1080x24 \
@@ -30,9 +31,10 @@ RUN set -e && \
         socat \
         sudo && \
     dbus-uuidgen --ensure=/etc/machine-id && \
-    pip3 install --upgrade pip && \
-    pip3 install --upgrade wheel setuptools && \
-    pip3 install pyserial && \
+    if [ ! -e /usr/bin/python ]; then ln -sf python3 /usr/bin/python; fi && \
+    if [ ! -e /usr/bin/pip ]; then ln -sf pip3 /usr/bin/pip; fi && \
+    pip install --upgrade pip wheel setuptools && \
+    pip install pyserial && \
     echo "$BOT_USER ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 USER ${BOT_USER}
