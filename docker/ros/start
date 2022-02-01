@@ -4,7 +4,7 @@ nohup Xvfb ${DISPLAY} -screen 0 ${RESOLUTION} -ac +extension GLX +render -norese
 
 nohup startxfce4 > /dev/null 2>&1 &
 
-nohup x11vnc -noxkb -noxrecord -noxdamage -display ${DISPLAY} -forever -bg -rfbauth ${HOME}/.vnc/passwd -rfbport ${BOT_VNC_PORT} -users ${BOT_USER} # > /dev/null 2>&1 &
+nohup x11vnc -noxkb -noxrecord -noxdamage -display ${DISPLAY} -forever -bg -rfbauth ${HOME}/.vnc/passwd -rfbport ${BOT_VNC_PORT} -users ${BOT_USER} > /dev/null 2>&1 &
 
 /serial-bridge
 

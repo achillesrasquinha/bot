@@ -15,7 +15,8 @@ services:
     #   - ros
     environment:
       - BOT_BRIDGE_TCP_HOST=host.docker.internal
+    privileged: true
 
-networks:
-  ros:
-    driver: bridge
+# networks:
+#   ros:
+#     driver: bridge
