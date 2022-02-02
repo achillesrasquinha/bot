@@ -9,7 +9,7 @@ ARG HOME=/home/bot \
     BOT_USER=bot \
     BOT_VNC_PASSWORD=bot \
     ARDUINO_IDE_VERSION=1.8.19 \
-    LANG=en_US
+    LANG=C
 
 ENV LANG=${LANG}.UTF-8 \
     LC_ALL=${LANG}.UTF-8 \
@@ -34,7 +34,6 @@ RUN set -e && \
     useradd -rm -d ${HOME} -s /bin/bash -g ${BOT_GROUP} -G sudo -u ${BOT_USER_ID} ${BOT_USER} && \
     apt-get update && \
     apt-get install -y --no-install-recommends \
-        wget \
         xvfb \
         xfce4 \
         x11vnc \
@@ -43,19 +42,15 @@ RUN set -e && \
         papirus-icon-theme \
         python3 \
         python3-pip \
-        socat \
-        openjdk-11-jre && \
+        socat && \
     if [ ! -e /usr/bin/python ]; then ln -sf python3 /usr/bin/python; fi && \
     if [ ! -e /usr/bin/pip ]; then ln -sf pip3 /usr/bin/pip; fi && \
     pip install --upgrade pip wheel setuptools && \
     pip install \
         pyserial && \
     echo "$BOT_USER ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
-    wget -q -O- https://downloads.arduino.cc/arduino-${ARDUINO_IDE_VERSION}-linux64.tar.xz \
-            | tar xJC /usr/local/share \
-        && ln -s /usr/local/share/arduino-${ARDUINO_IDE_VERSION} /usr/local/share/arduino \
-        && ln -s /usr/local/share/arduino-${ARDUINO_IDE_VERSION}/arduino /usr/local/bin/arduino && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* && \
+    echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> ${HOME}/.bashrc
 
 USER ${BOT_USER}
 

@@ -8,6 +8,7 @@ services:
     image: ${BOT_DOCKER_REGISTRY:-ghcr.io/achillesrasquinha/ros}:core
     volumes:
       - ./shared:/home/bot/shared
+      - ./catkin_ws:/home/bot/catkin_ws
     ports:
       - ${BOT_VNC_PORT:-5900}:${BOT_VNC_PORT:-5900}
     command: /start

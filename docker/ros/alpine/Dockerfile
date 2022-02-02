@@ -36,7 +36,6 @@ RUN set -e && \
         gcc \
         g++ \
         sudo && \
-        # openjdk8-jre && \
     dbus-uuidgen --ensure=/etc/machine-id && \
     if [ ! -e /usr/bin/python ]; then ln -sf python3 /usr/bin/python; fi && \
     if [ ! -e /usr/bin/pip ]; then ln -sf pip3 /usr/bin/pip; fi && \
@@ -44,10 +43,6 @@ RUN set -e && \
     pip install \
         catkin_tools \
         pyserial && \
-    # wget -q -O- https://downloads.arduino.cc/arduino-${ARDUINO_IDE_VERSION}-linux64.tar.xz \
-    #     | tar xJC /usr/local/share && \
-    # ln -s /usr/local/share/arduino-${ARDUINO_IDE_VERSION} /usr/local/share/arduino && \
-    # ln -s /usr/local/share/arduino-${ARDUINO_IDE_VERSION}/arduino /usr/local/bin/arduino && \
     echo "$BOT_USER ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 USER ${BOT_USER}
@@ -61,7 +56,11 @@ COPY --chown=${BOT_GROUP}:${BOT_USER} ./serial-bridge.sh /serial-bridge
 COPY --chown=${BOT_GROUP}:${BOT_USER} ./start /start
 
 RUN chmod +x /serial-bridge /start && \
-    mkdir -p ${HOME}/catkin_ws/src
+    mkdir -p ${HOME}/catkin_ws/src && \
+    mkdir -p ${HOME}/shared && \
+    ln -sf ${HOME}/shared/catkin_ws ${HOME}/catkin_ws
+
+VOLUME ${HOME}/shared
 
 EXPOSE ${BOT_VNC_PORT}
 
