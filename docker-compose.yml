@@ -4,7 +4,7 @@ services:
   ros:
     build:
       context: ./docker/ros
-      dockerfile: ./Dockerfile
+      dockerfile: ./debian/Dockerfile
     image: ${BOT_DOCKER_REGISTRY:-ghcr.io/achillesrasquinha/ros}:core
     volumes:
       - ./shared:/home/bot/shared
