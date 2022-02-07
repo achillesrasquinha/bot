@@ -20,7 +20,8 @@ ENV LANG=en_US.UTF-8 \
     ROS_PACKAGE_PATH=/home/bot/catkin_ws/src \
     DPYTHON_EXECUTABLE=/usr/bin/python3 \
     WEBSOCKIFY_VERSION=0.10.0 \
-    ROS_DISTRO=noetic
+    ROS_DISTRO=noetic \
+    ROS_CORE_PORT=11311
 
 RUN set -e && \
     addgroup -S ${BOT_GROUP} && \
@@ -38,6 +39,8 @@ RUN set -e && \
         py3-pip \
         socat \
         make \
+        gcc \
+        g++ \
         sudo && \
     dbus-uuidgen --ensure=/etc/machine-id && \
     if [ ! -e /usr/bin/python ]; then ln -sf python3 /usr/bin/python; fi && \
@@ -51,7 +54,8 @@ RUN set -e && \
     rm -rf /noVNC/.git && \
     rm -rf /noVNC/utils/websockify/.git && \
     apk del git && \
-    sed -i -- "s/ps -p/ps -o pid | grep/g" /noVNC/utils/novnc_proxy
+    sed -i -- "s/ps -p/ps -o pid | grep/g" /noVNC/utils/novnc_proxy && \
+    cp /noVNC/vnc.html /noVNC/index.html
 
 COPY ../app /app
 RUN cd /app && \
