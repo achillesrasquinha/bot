@@ -1,5 +1,5 @@
 git+https://github.com/achillesrasquinha/bpyutils.git@develop#egg=bpyutils
 Pillow
-deepface
-pyserial
+# deepface
+# pyserial
 # pyaudio

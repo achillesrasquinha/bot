@@ -41,7 +41,8 @@ RUN set -e && \
         make \
         gcc \
         g++ \
-        sudo && \
+        sudo \
+        ros-noetic-turtlesim && \
     dbus-uuidgen --ensure=/etc/machine-id && \
     if [ ! -e /usr/bin/python ]; then ln -sf python3 /usr/bin/python; fi && \
     if [ ! -e /usr/bin/pip ]; then ln -sf pip3 /usr/bin/pip; fi && \
@@ -53,15 +54,20 @@ RUN set -e && \
     git clone --depth 1 https://github.com/novnc/websockify /noVNC/utils/websockify && \
     rm -rf /noVNC/.git && \
     rm -rf /noVNC/utils/websockify/.git && \
-    apk del git && \
     sed -i -- "s/ps -p/ps -o pid | grep/g" /noVNC/utils/novnc_proxy && \
     cp /noVNC/vnc.html /noVNC/index.html
 
-COPY ../app /app
+COPY ../socket-app /app
 RUN cd /app && \
     pip install -r ./requirements.txt
 
 USER ${BOT_USER}
+
+RUN git clone --depth 1 https://github.com/achillesrasquinha/bot --branch develop ${HOME}/bot && \
+    cd ${HOME}/bot && \
+    pip install --use-deprecated=legacy-resolver -r ./requirements.txt && \
+    python setup.py install && \
+    apk del git
 
 WORKDIR ${HOME}
 

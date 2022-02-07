@@ -13,7 +13,7 @@ roscore -p ${ROS_CORE_PORT} > /dev/null 2>&1 &
 
 /serial-bridge > /dev/null 2>&1 &
 
-/noVNC/utils/novnc_proxy --vnc localhost:5900 --listen ${BOT_HOST}:${BOT_PORT} > /dev/null 2>&1 &
+/noVNC/utils/novnc_proxy --vnc ${BOT_HOST}:5900 --listen ${BOT_HOST}:${BOT_PORT} > /dev/null 2>&1 &
 
 cd /app && flask run --host 0.0.0.0 --port ${BOT_SOCKET_PORT}
 

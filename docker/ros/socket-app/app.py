@@ -6,8 +6,6 @@ import serial
 app     = Flask(__name__)
 socket  = SocketIO(app)
 
-
-
 @socket.on("connect")
 def connect():
     print("A user is connected.")
