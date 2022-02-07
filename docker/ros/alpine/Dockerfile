@@ -1,21 +1,26 @@
-FROM ghcr.io/alpine-ros/alpine-ros:noetic-bare
+FROM ghcr.io/alpine-ros/alpine-ros:noetic-ros-core
 
 ARG HOME=/home/bot \
     BOT_VNC_PASSWORD=bot
 
 ENV LANG=en_US.UTF-8 \
     PYTHONUNBUFFERED=1 \
-    DISPLAY=:1 \
+    DISPLAY=:99 \
     TERM=xterm \
     RESOLUTION=1920x1080x24 \
     BOT_VNC_PORT=5900 \
+    BOT_HOST=ros \
+    BOT_PORT=8080 \
+    BOT_SOCKET_PORT=3000 \
     BOT_GROUP=bot \
     BOT_USER=bot \
     BOT_BRIDGE_LOCATION="/dev/tty.Bridge-Port" \
     BOT_BRIDGE_TCP_HOST=host.docker.internal \
     BOT_BRIDGE_TCP_PORT=7777 \
     ROS_PACKAGE_PATH=/home/bot/catkin_ws/src \
-    DPYTHON_EXECUTABLE=/usr/bin/python3
+    DPYTHON_EXECUTABLE=/usr/bin/python3 \
+    WEBSOCKIFY_VERSION=0.10.0 \
+    ROS_DISTRO=noetic
 
 RUN set -e && \
     addgroup -S ${BOT_GROUP} && \
@@ -23,27 +28,34 @@ RUN set -e && \
     apk update && \
     apk add --no-cache \
         bash \
+        git \
         x11vnc \
         xvfb \
         xfce4 \
         xterm \
         faenza-icon-theme \
-        ros-noetic-catkin \
         python3 \
         py3-pip \
         socat \
         make \
-        gcc \
-        g++ \
         sudo && \
     dbus-uuidgen --ensure=/etc/machine-id && \
     if [ ! -e /usr/bin/python ]; then ln -sf python3 /usr/bin/python; fi && \
     if [ ! -e /usr/bin/pip ]; then ln -sf pip3 /usr/bin/pip; fi && \
     pip install --upgrade pip wheel setuptools && \
     pip install \
-        catkin_tools \
         pyserial && \
-    echo "$BOT_USER ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+    echo "$BOT_USER ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
+    git clone --depth 1 https://github.com/novnc/noVNC.git /noVNC && \
+    git clone --depth 1 https://github.com/novnc/websockify /noVNC/utils/websockify && \
+    rm -rf /noVNC/.git && \
+    rm -rf /noVNC/utils/websockify/.git && \
+    apk del git && \
+    sed -i -- "s/ps -p/ps -o pid | grep/g" /noVNC/utils/novnc_proxy
+
+COPY ../app /app
+RUN cd /app && \
+    pip install -r ./requirements.txt
 
 USER ${BOT_USER}
 
@@ -62,6 +74,6 @@ RUN chmod +x /serial-bridge /start && \
 
 VOLUME ${HOME}/shared
 
-EXPOSE ${BOT_VNC_PORT}
+EXPOSE ${BOT_VNC_PORT} ${BOT_PORT} ${BOT_SOCKET_PORT}
 
 CMD [ "/start" ]

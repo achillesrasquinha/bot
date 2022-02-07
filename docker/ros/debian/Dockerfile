@@ -27,7 +27,8 @@ ENV LANG=${LANG}.UTF-8 \
     BOT_BRIDGE_TCP_PORT=7777 \
     ROS_DISTRO=noetic \
     ROS_PACKAGE_PATH=${HOME}/catkin_ws/src \
-    DPYTHON_EXECUTABLE=/usr/bin/python3
+    DPYTHON_EXECUTABLE=/usr/bin/python3 \
+    ROS_CORE_PORT=11311
 
 RUN set -e && \
     groupadd -g ${BOT_GROUP_ID} ${BOT_GROUP} && \
@@ -47,7 +48,8 @@ RUN set -e && \
     if [ ! -e /usr/bin/pip ]; then ln -sf pip3 /usr/bin/pip; fi && \
     pip install --upgrade pip wheel setuptools && \
     pip install \
-        pyserial && \
+        pyserial \
+        git+https://github.com/achillesrasquinha/bpyutils.git@develop#egg=bpyutils && \
     echo "$BOT_USER ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
     rm -rf /var/lib/apt/lists/* && \
     echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> ${HOME}/.bashrc

@@ -23,7 +23,7 @@ void loop () {
 
         switch (inputByte) {
             case ASCII_W:
-                System.println("Move forward.");
+                Serial.println("Move forward.");
 
                 break;
 
@@ -31,4 +31,6 @@ void loop () {
                 break;
         }
     }
+
+    balboa.gyro();
 }
