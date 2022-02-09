@@ -1,6 +1,8 @@
 #!/bin/bash
 
-source /opt/ros/${ROS_DISTRO}/setup.bash
+source /usr/ros/${ROS_DISTRO}/setup.sh
+
+xhost +
 
 nohup Xvfb ${DISPLAY} -screen 0 ${RESOLUTION} -ac +extension GLX +render -noreset > /dev/null 2>&1 &
 
@@ -8,7 +10,6 @@ nohup startxfce4 > /dev/null 2>&1 &
 
 nohup x11vnc -xkb -noxrecord -noxdamage -display ${DISPLAY} -forever -bg -rfbauth ${HOME}/.vnc/passwd -rfbport ${BOT_VNC_PORT} -users ${BOT_USER} # > /dev/null 2>&1 &
 
-export ROS_MASTER_URI=http://${BOT_HOST}:${ROS_CORE_PORT}
 roscore -p ${ROS_CORE_PORT} > /dev/null 2>&1 &
 
 /serial-bridge > /dev/null 2>&1 &

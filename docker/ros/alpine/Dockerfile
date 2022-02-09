@@ -21,7 +21,8 @@ ENV LANG=en_US.UTF-8 \
     DPYTHON_EXECUTABLE=/usr/bin/python3 \
     WEBSOCKIFY_VERSION=0.10.0 \
     ROS_DISTRO=noetic \
-    ROS_CORE_PORT=11311
+    ROS_CORE_PORT=13111 \
+    ROS_MASTER_URI=http://ros:13111
 
 RUN set -e && \
     addgroup -S ${BOT_GROUP} && \
@@ -30,6 +31,7 @@ RUN set -e && \
     apk add --no-cache \
         bash \
         git \
+        xhost \
         x11vnc \
         xvfb \
         xfce4 \
@@ -41,21 +43,28 @@ RUN set -e && \
         make \
         gcc \
         g++ \
-        sudo \
-        ros-noetic-turtlesim && \
+        sudo && \
     dbus-uuidgen --ensure=/etc/machine-id && \
     if [ ! -e /usr/bin/python ]; then ln -sf python3 /usr/bin/python; fi && \
     if [ ! -e /usr/bin/pip ]; then ln -sf pip3 /usr/bin/pip; fi && \
     pip install --upgrade pip wheel setuptools && \
     pip install \
-        pyserial && \
+        pyserial \
+        git+https://github.com/achillesrasquinha/bpyutils.git@develop && \
+    git clone --depth 1 https://github.com/achillesrasquinha/bot.git /bot && \
+    cd /bot && \
+    pip3 install -r ./requirements.txt && \
+    python3 setup.py install && \
     echo "$BOT_USER ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
     git clone --depth 1 https://github.com/novnc/noVNC.git /noVNC && \
     git clone --depth 1 https://github.com/novnc/websockify /noVNC/utils/websockify && \
     rm -rf /noVNC/.git && \
     rm -rf /noVNC/utils/websockify/.git && \
+    apk del git && \
     sed -i -- "s/ps -p/ps -o pid | grep/g" /noVNC/utils/novnc_proxy && \
-    cp /noVNC/vnc.html /noVNC/index.html
+    cp /noVNC/vnc.html /noVNC/index.html && \
+    # change default shell from ash to bash
+    sed -i -e "s/bin\/ash/bin\/bash/" /etc/passwd
 
 COPY ../socket-app /app
 RUN cd /app && \
@@ -63,17 +72,11 @@ RUN cd /app && \
 
 USER ${BOT_USER}
 
-RUN git clone --depth 1 https://github.com/achillesrasquinha/bot --branch develop ${HOME}/bot && \
-    cd ${HOME}/bot && \
-    pip install --use-deprecated=legacy-resolver -r ./requirements.txt && \
-    python setup.py install && \
-    apk del git
-
 WORKDIR ${HOME}
 
 RUN mkdir -p ${HOME}/.vnc && \
     x11vnc -storepasswd ${BOT_VNC_PASSWORD} ${HOME}/.vnc/passwd
-
+    
 COPY --chown=${BOT_GROUP}:${BOT_USER} ./serial-bridge.sh /serial-bridge
 COPY --chown=${BOT_GROUP}:${BOT_USER} ./start /start
 

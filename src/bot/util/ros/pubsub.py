@@ -18,9 +18,11 @@ DEFAULT = {
 }
 
 class PubSubNode:
-    def __init__(self, name = None, rate = DEFAULT["rate"], mtype = DEFAULT["mtype"], *args, **kwargs):
-        self._name  = name or get_random_str()
+    def __init__(self, name = None, rate = DEFAULT["rate"], mtype = DEFAULT["mtype"], 
+        topic = None, *args, **kwargs):
+        self._name  = name  or get_random_str()
         self._rate  = rate
+        self._topic = topic or get_random_str()
 
         self._mtype = mtype
 
@@ -28,8 +30,14 @@ class PubSubNode:
 
         rospy.init_node(name, anonymous = anonymous)
 
+        rospy.loginfo("Initialized Node: %s." % name)
+
     def run(self):
         raise NotImplementedError("Please write your own run method.")
+
+    @property
+    def topic(self):
+        return getattr(self, "_topic", None)
 
     @property
     def rate(self):
@@ -51,10 +59,10 @@ class PubSubNode:
 
 class SubscriberNode(PubSubNode):
     def __init__(self, *args, **kwargs):
-        self._super = super(PublisherNode, self)
+        self._super = super(SubscriberNode, self)
         self._super.__init__(*args, **kwargs)
 
-        self._subscriber = rospy.Subscriber(self._topic, self.message_type["type"])
+        self._subscriber = rospy.Subscriber(self.topic, self.message_type["type"])
 
     def run(self):
         rospy.spin()
@@ -66,5 +74,5 @@ class PublisherNode(PubSubNode):
         self._super = super(PublisherNode, self)
         self._super.__init__(*args, **kwargs)
 
-        self._publisher  = rospy.Publisher(self._topic, self.message_type["type"],
+        self._publisher  = rospy.Publisher(self.topic, self.message_type["type"],
             queue_size = queue_size)
