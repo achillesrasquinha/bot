@@ -45,7 +45,10 @@ RUN set -e && \
         gcc \
         g++ \
         sudo \
-        ros-${ROS_DISTRO}-turtlesim && \
+        ros-${ROS_DISTRO}-turtlesim \
+        openrc \
+        lightdm \
+        dbus && \
     dbus-uuidgen --ensure=/etc/machine-id && \
     if [ ! -e /usr/bin/python ]; then ln -sf python3 /usr/bin/python; fi && \
     if [ ! -e /usr/bin/pip ]; then ln -sf pip3 /usr/bin/pip; fi && \
@@ -67,9 +70,11 @@ RUN set -e && \
     cp /noVNC/vnc.html /noVNC/index.html && \
     # change default shell from ash to bash
     sed -i -e "s/bin\/ash/bin\/bash/" /etc/passwd && \
-    echo "source $HOME/catkin_ws/devel/setup.sh" >> $HOME/.bashrc
+    echo "source $HOME/catkin_ws/devel/setup.sh" >> $HOME/.bashrc && \
+    rc-update add dbus && \
+    rc-update add lightdm
 
-COPY ../socket-app /app
+COPY ./socket-app /app
 RUN cd /app && \
     pip install -r ./requirements.txt
 
@@ -78,7 +83,8 @@ USER ${BOT_USER}
 WORKDIR ${HOME}
 
 RUN mkdir -p ${HOME}/.vnc && \
-    x11vnc -storepasswd ${BOT_VNC_PASSWORD} ${HOME}/.vnc/passwd
+    x11vnc -storepasswd ${BOT_VNC_PASSWORD} ${HOME}/.vnc/passwd && \
+    touch ${HOME}/.Xauthority
     
 COPY --chown=${BOT_GROUP}:${BOT_USER} ./serial-bridge.sh /serial-bridge
 COPY --chown=${BOT_GROUP}:${BOT_USER} ./start /start

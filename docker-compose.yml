@@ -1,4 +1,4 @@
-version: "3.7"
+version: "3.3"
 
 services:
   ros:
@@ -20,6 +20,37 @@ services:
       - BOT_BRIDGE_TCP_HOST=host.docker.internal
       - BOT_HOST=ros
 
+  proxy:
+    build:
+      context: ./docker/proxy
+      dockerfile: ./Dockerfile
+    image: ${BOT_DOCKER_REGISTRY:-ghcr.io/achillesrasquinha/ros}:proxy
+    networks:
+      - ros
+    depends_on:
+      - ros
+      # - certbot
+    ports:
+      - "80:80"
+    # volumes:
+    #   - certbot_data:/var/www/certbot:ro
+    #   - certbot_conf:/etc/nginx/ssl/:ro
+    environment:
+      - BOT_HOST=ros
+      - BOT_PORT=${BOT_PORT:-8080}
+      - BOT_VNC_PORT=${BOT_VNC_PORT:-5900}
+    command: /start
+
+  # certbot:
+  #   image: certbot/certbot
+  #   volumes:
+  #     - certbot_data:/var/www/certbot:ro
+  #     - certbot_conf:/etc/letsencrypt/:rw
+
 networks:
   ros:
     driver: bridge
+
+# volumes:
+#   certbot_data: {}
+#   certbot_conf: {}
