@@ -92,10 +92,8 @@ COPY --chown=${BOT_GROUP}:${BOT_USER} ./start /start
 RUN chmod +x /serial-bridge /start && \
     mkdir -p ${HOME}/catkin_ws/src && \
     mkdir -p ${HOME}/shared && \
-    ln -sf ${HOME}/shared/catkin_ws ${HOME}/catkin_ws
-
-VOLUME ${HOME}/shared
-
-EXPOSE ${BOT_VNC_PORT} ${BOT_PORT} ${BOT_SOCKET_PORT}
+    ln -sf ${HOME}/shared/catkin_ws ${HOME}/catkin_ws && \
+    sudo chown ${BOT_GROUP}:${BOT_USER} ${HOME}/catkin_ws && \
+    sudo chown ${BOT_GROUP}:${BOT_USER} ${HOME}/shared
 
 CMD [ "/start" ]
