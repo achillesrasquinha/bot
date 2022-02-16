@@ -4,6 +4,7 @@ ARG HOME=/home/bot \
     BOT_VNC_PASSWORD=bot
 
 ENV LANG=en_US.UTF-8 \
+    LC_ALL=en_US.UTF-8 \
     PYTHONUNBUFFERED=1 \
     DISPLAY=:99 \
     TERM=xterm \
@@ -43,18 +44,19 @@ RUN set -e && \
         make \
         gcc \
         g++ \
-        sudo && \
+        sudo \
+        ros-${ROS_DISTRO}-turtlesim && \
     dbus-uuidgen --ensure=/etc/machine-id && \
     if [ ! -e /usr/bin/python ]; then ln -sf python3 /usr/bin/python; fi && \
     if [ ! -e /usr/bin/pip ]; then ln -sf pip3 /usr/bin/pip; fi && \
-    pip install --upgrade pip wheel setuptools && \
+    pip install --upgrade pip wheel "setuptools<50" && \
     pip install \
         pyserial \
         git+https://github.com/achillesrasquinha/bpyutils.git@develop && \
-    git clone --depth 1 https://github.com/achillesrasquinha/bot.git /bot && \
-    cd /bot && \
-    pip3 install -r ./requirements.txt && \
-    python3 setup.py install && \
+    # git clone --depth 1 https://github.com/achillesrasquinha/bot.git /bot && \
+    # cd /bot && \
+    # pip3 install -r ./requirements.txt --use-deprecated=legacy-resolver && \
+    # python3 setup.py install && \
     echo "$BOT_USER ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
     git clone --depth 1 https://github.com/novnc/noVNC.git /noVNC && \
     git clone --depth 1 https://github.com/novnc/websockify /noVNC/utils/websockify && \
@@ -64,7 +66,8 @@ RUN set -e && \
     sed -i -- "s/ps -p/ps -o pid | grep/g" /noVNC/utils/novnc_proxy && \
     cp /noVNC/vnc.html /noVNC/index.html && \
     # change default shell from ash to bash
-    sed -i -e "s/bin\/ash/bin\/bash/" /etc/passwd
+    sed -i -e "s/bin\/ash/bin\/bash/" /etc/passwd && \
+    echo "source $HOME/catkin_ws/devel/setup.sh" >> $HOME/.bashrc
 
 COPY ../socket-app /app
 RUN cd /app && \
