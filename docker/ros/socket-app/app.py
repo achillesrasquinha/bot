@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_socketio import SocketIO
+from engineio.payload import Payload
 
 import serial
 import serial.threaded
@@ -7,6 +8,8 @@ import serial.threaded
 from bpyutils.util.environ import getenv
 from bpyutils.util.system  import popen
 from bpyutils.exception    import PopenError
+
+Payload.max_decode_packets = 500
 
 app     = Flask(__name__)
 socket  = SocketIO(app)
@@ -20,16 +23,16 @@ class SerialToSocketIO(serial.threaded.Protocol):
         return self
 
     def data_received(self, data):
-        socket.emit("serial:data", data)
+        socket.emit("serial:incoming", data)
 
 @socket.on("connect")
 def connect():
     print("A user is connected.")
 
-@socket.on("data")
+@socket.on("serial:outgoing")
 def on_data(data):
     try:
-        popen("socat pty,link='/dev/tty.Bridge-Port' tcp:ros:7777")
+        popen("sudo socat pty,link='/dev/tty.Bridge-Port' tcp:ros:7777")
     except PopenError:
         print("Error using socat")
 

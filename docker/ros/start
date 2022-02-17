@@ -15,12 +15,12 @@ nohup x11vnc -xkb -noxrecord -noxdamage -display ${DISPLAY} -forever -bg -rfbaut
 
 roscore -p ${ROS_CORE_PORT} > /dev/null 2>&1 &
 
-/serial-bridge > /dev/null 2>&1 &
+# /serial-bridge > /dev/null 2>&1 &
 
 /noVNC/utils/novnc_proxy --vnc ${BOT_HOST}:${BOT_VNC_PORT} --listen ${BOT_HOST}:${BOT_PORT} > /dev/null 2>&1 &
 
 /socket-bridge > /dev/null 2>&1 &
 
-cd /app && sudo flask run --host 0.0.0.0 --port ${BOT_SOCKET_PORT}
+cd /app && flask run --host 0.0.0.0 --port ${BOT_SOCKET_PORT}
 
 tail -f /dev/null

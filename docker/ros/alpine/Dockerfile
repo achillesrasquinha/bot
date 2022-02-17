@@ -65,7 +65,7 @@ RUN set -e && \
     git clone --depth 1 https://github.com/novnc/websockify /noVNC/utils/websockify && \
     rm -rf /noVNC/.git && \
     rm -rf /noVNC/utils/websockify/.git && \
-    apk del git && \
+    # apk del git && \
     sed -i -- "s/ps -p/ps -o pid | grep/g" /noVNC/utils/novnc_proxy && \
     cp /noVNC/vnc.html /noVNC/index.html && \
     # change default shell from ash to bash

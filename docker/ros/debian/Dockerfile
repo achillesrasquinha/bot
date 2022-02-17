@@ -65,7 +65,7 @@ COPY --chown=${BOT_GROUP}:${BOT_USER} ./serial-bridge.sh /serial-bridge
 COPY --chown=${BOT_GROUP}:${BOT_USER} ./start /start
 
 RUN chmod +x /serial-bridge /start && \
-    mkdir -p ${HOME}/catkin_ws/src
+    mkdir -p ${HOME}/catkin_ws/src && \
 
 EXPOSE ${BOT_VNC_PORT}
 
