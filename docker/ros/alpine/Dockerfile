@@ -87,13 +87,15 @@ RUN mkdir -p ${HOME}/.vnc && \
     touch ${HOME}/.Xauthority
     
 COPY --chown=${BOT_GROUP}:${BOT_USER} ./serial-bridge.sh /serial-bridge
+COPY --chown=${BOT_GROUP}:${BOT_USER} ./socket-bridge /socket-bridge
 COPY --chown=${BOT_GROUP}:${BOT_USER} ./start /start
 
-RUN chmod +x /serial-bridge /start && \
-    mkdir -p ${HOME}/catkin_ws/src && \
-    mkdir -p ${HOME}/shared && \
-    ln -sf ${HOME}/shared/catkin_ws ${HOME}/catkin_ws && \
-    sudo chown ${BOT_GROUP}:${BOT_USER} ${HOME}/catkin_ws && \
-    sudo chown ${BOT_GROUP}:${BOT_USER} ${HOME}/shared
+RUN chmod +x /serial-bridge /socket-bridge /start
+    # && \
+    # mkdir -p ${HOME}/catkin_ws/src && \
+    # mkdir -p ${HOME}/shared && \
+    # ln -sf ${HOME}/shared/catkin_ws ${HOME}/catkin_ws && \
+    # sudo chown ${BOT_GROUP}:${BOT_USER} ${HOME}/catkin_ws && \
+    # sudo chown ${BOT_GROUP}:${BOT_USER} ${HOME}/shared
 
 CMD [ "/start" ]

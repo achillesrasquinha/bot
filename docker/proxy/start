@@ -1,5 +1,5 @@
 #!/bin/bash
 
-envsubst '${BOT_HOST} ${BOT_PORT}' < /nginx.conf.template > /etc/nginx/conf.d/default.conf
+envsubst '${BOT_HOST},${BOT_PORT},${BOT_SOCKET_PORT}' < /nginx.conf.template > /etc/nginx/conf.d/default.conf
 
 nginx -g "daemon off;"
